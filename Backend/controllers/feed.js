@@ -9,7 +9,7 @@ exports.getPosts = (req, res, next) => {
         creator: {
           name: "Remez",
         },
-        date: new Date(),
+        createdAt: new Date(),
       },
     ],
   });
