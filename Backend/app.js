@@ -1,8 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 require("dotenv").config();
 
 const PORT = process.env.PORT;
+
+const MONGODB_URI = `mongodb+srv://${process.env.MongodbUser}:${process.env.MongodbPassword}@${process.env.MongodbDataBaseName}.7vjdhyd.mongodb.net/${process.env.MongodbCollectionName}?retryWrites=true&w=majority`;
 
 const feedRoutes = require("./routes/feed");
 
@@ -23,8 +26,17 @@ app.use((req, res, next) => {
 
 app.use("/feed", feedRoutes);
 
-app.listen(PORT, (err) => {
-  if (!err) {
-    console.log(`Server listening on port ${PORT}`);
-  }
-});
+mongoose
+  .connect(MONGODB_URI)
+  .then((result) => {
+    app.listen(PORT, (err) => {
+      if (!err) {
+        console.log("Connected to Database");
+        console.log(`Server listening on port ${PORT}`);
+      }
+    });
+  })
+  .catch((err) => {
+    console.log("Failed to connect to mongodb");
+    console.log(err);
+  });
