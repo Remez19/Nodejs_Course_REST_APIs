@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const multer = require("multer");
 require("dotenv").config();
 
 const PORT = process.env.PORT;
@@ -12,8 +13,38 @@ const feedRoutes = require("./routes/feed");
 
 const app = express();
 
+// Control where the files will be stored
+const fileStorage = multer.diskStorage({
+  destination: (req, file, callBack) => {
+    callBack(null, "images");
+  },
+  // Controls how the files should be named on save
+  filename: (req, file, callBack) => {
+    callBack(null, new Date().toISOString() + "-" + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, callBack) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
+    // Valid file
+    callBack(null, true);
+  } else {
+    // invalid file type
+    callBack(null, false);
+  }
+};
+
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
+
+// single("image") - inform multer we expecting to get one file
+// in the filed name "image" in the incoming request
+
+app.use(multer({ storage: fileStorage, fileFilter }).single("image"));
 
 // To serve the images folder statically
 // we need to use the path core module
