@@ -11,6 +11,7 @@ const MONGODB_URI = `mongodb+srv://${process.env.MongodbUser}:${process.env.Mong
 
 const feedRoutes = require("./routes/feed");
 const authRoutes = require("./routes/auth");
+const { Socket } = require("socket.io");
 
 const app = express();
 
@@ -81,11 +82,26 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {
-    app.listen(PORT, (err) => {
+    const server = app.listen(PORT, (err) => {
       if (!err) {
         console.log("Connected to Database");
         console.log(`Server listening on port ${PORT}`);
       }
+    });
+    // socker.io return a function that we need to excute and pass the server
+    // to.
+    // Gives back a socket.io object
+    const io = require("socket.io")(server, {
+      cors: {
+        origin: "*",
+      },
+    });
+    // From here we can define a eventListeners
+    // connection - wait on a new connection.
+    // this function will get fired for every new connection (client)
+    // the socket var is the connection.
+    io.on("connection", (socket) => {
+      console.log("Client connected");
     });
   })
   .catch((err) => {
