@@ -5,10 +5,28 @@ const path = require("path");
 const Post = require("../models/post");
 
 exports.getPosts = (req, res, next) => {
-  // Fetching data from db
+  // if req.query.page is undefined then default is 1
+  const currentPage = req.query.page || 1;
+  // Posts per page
+  const perPage = 2;
+  let totalPosts;
   Post.find()
+    .countDocuments()
+    .then((count) => {
+      totalPosts = count;
+      // Fetching data from db
+      return Post.find()
+        .skip((currentPage - 1) * perPage)
+        .limit(perPage);
+    })
     .then((posts) => {
-      res.status(200).json({ message: "Fetched posts successfully.", posts });
+      res
+        .status(200)
+        .json({
+          message: "Fetched posts successfully.",
+          posts,
+          totalItems: totalPosts,
+        });
     })
     .catch((err) => {
       if (!err.statusCode) {
