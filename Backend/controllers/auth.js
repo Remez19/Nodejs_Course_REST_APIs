@@ -1,9 +1,9 @@
 const User = require("../models/user");
 const { validationResult } = require("express-validator/check");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const SALT_VALUE = 12;
-
 exports.signup = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -55,7 +55,22 @@ exports.login = (req, res, next) => {
         error.statusCode = 401;
         throw error;
       }
-      // password and email validated => create JWT (Jason Web Token)
+      // password and email validated => create JWT (Json Web Token)
+      // jwt.sign() - Creates a new signure and packs it in a new json web token.
+      // We can add any data we want to the token.
+      // The second argument we need to pass is the secret key (only the server knows about).
+      // Generally we want to pass long string.
+      // The last argument is a configuration object
+      const token = jwt.sign(
+        {
+          email: loadedUser.email,
+          userId: loadedUser._id.toString(),
+        },
+        "secret",
+        // Will make sure that the token will be expired in 1 hour
+        { expiresIn: "1h" }
+      );
+      res.status(200).json({ token: token, userId: loadedUser._id.toString() });
     })
     .catch((err) => {
       if (!err.statusCode) {
