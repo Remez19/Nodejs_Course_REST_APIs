@@ -10,6 +10,7 @@ const PORT = process.env.PORT;
 const MONGODB_URI = `mongodb+srv://${process.env.MongodbUser}:${process.env.MongodbPassword}@${process.env.MongodbDataBaseName}.7vjdhyd.mongodb.net/${process.env.MongodbCollectionName}?retryWrites=true&w=majority`;
 
 const feedRoutes = require("./routes/feed");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 
@@ -64,6 +65,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/feed", feedRoutes);
+app.use("/auth", authRoutes);
 
 // Erorr middleware to catch requests that ended up
 // in a error.
@@ -72,7 +74,8 @@ app.use((error, req, res, next) => {
   // if error.statusCode not defined than 500 will be default
   const status = error.statusCode || 500;
   const message = error.message;
-  res.status(status).json({ message });
+  const data = errors.data;
+  res.status(status).json({ message, data });
 });
 
 mongoose
