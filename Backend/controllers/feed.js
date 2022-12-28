@@ -136,8 +136,13 @@ exports.updatePost = (req, res, next) => {
         error.statusCode = 404;
         throw error;
       }
-      // Checking if a new image
+      if (!post.creator.toString() === req.userId) {
+        const error = new Error("Not authorized!");
+        error.statusCode = 403;
+        throw error;
+      }
       if (imageUrl !== post.imageUrl) {
+        // Checking if a new image
         clearImage(post.imageUrl);
       }
       post.title = title;
