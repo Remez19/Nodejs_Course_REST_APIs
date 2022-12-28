@@ -132,6 +132,11 @@ class Feed extends Component {
     fetch(url, {
       method,
       body: formData,
+      headers: {
+        // We put bearer because its a convetion when working
+        // with jwt.
+        Authorization: "Bearer " + this.props.token,
+      },
     })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
@@ -184,6 +189,11 @@ class Feed extends Component {
     this.setState({ postsLoading: true });
     fetch("http://localhost:8080/feed/post/" + postId, {
       method: "DELETE",
+      headers: {
+        // We put bearer because its a convetion when working
+        // with jwt.
+        Authorization: "Bearer " + this.props.token,
+      },
     })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
