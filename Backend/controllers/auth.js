@@ -35,3 +35,32 @@ exports.signup = (req, res, next) => {
       next(err);
     });
 };
+
+exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+  let loadedUser;
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        const error = new Error("User not found.");
+        error.statusCode = 401;
+        throw error;
+      }
+      loadedUser = user;
+      return bcrypt.compare(password, user.password);
+    })
+    .then((isEqual) => {
+      if (isEqual === false) {
+        const error = new Error("Worng password.");
+        error.statusCode = 401;
+        throw error;
+      }
+      // password and email validated => create JWT (Jason Web Token)
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
