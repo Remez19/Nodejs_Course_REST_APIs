@@ -91,11 +91,7 @@ mongoose
     // socker.io return a function that we need to excute and pass the server
     // to.
     // Gives back a socket.io object
-    const io = require("socket.io")(server, {
-      cors: {
-        origin: "*",
-      },
-    });
+    const io = require("./socket").init(server);
     // From here we can define a eventListeners
     // connection - wait on a new connection.
     // this function will get fired for every new connection (client)
