@@ -1,3 +1,4 @@
+require("dotenv").config();
 const User = require("../models/user");
 const { validationResult } = require("express-validator/check");
 const bcrypt = require("bcryptjs");
@@ -67,7 +68,7 @@ exports.login = (req, res, next) => {
           email: loadedUser.email,
           userId: loadedUser._id.toString(),
         },
-        "secret",
+        process.env.SECRET_KEY,
         // Will make sure that the token will be expired in 1 hour
         { expiresIn: "1h" }
       );
