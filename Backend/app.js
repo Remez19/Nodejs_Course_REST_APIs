@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const multer = require("multer");
 require("dotenv").config();
+const auth = require("./middleware/auth");
 
 const graphqlSchema = require("./graphql/schema");
 const graphqlResolver = require("./graphql/resolvers");
@@ -67,6 +68,8 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+app.use(auth);
 
 // common convention to use "/graphql"
 // To graphqlHttp() we pass an object with two keys:

@@ -4,9 +4,8 @@ const jwt = require("jsonwebtoken");
 module.exports = (req, res, next) => {
   const authHeader = req.get("Authorization");
   if (!authHeader) {
-    const error = new Error("Not authenticated.");
-    error.statusCode = 401;
-    throw error;
+    req.isAuth = false;
+    return next();
   }
   // Toget the token from the headeres in the request
   // we can use req.get()
@@ -18,17 +17,17 @@ module.exports = (req, res, next) => {
     // To jwt.verify() we pass the token and the secret key.
     decodedToken = jwt.verify(token, process.env.SECRET_KEY);
   } catch (err) {
-    err.statusCode = 500;
-    throw err;
+    req.isAuth = false;
+    return next();
   }
   if (!decodedToken) {
     // if it wasnt able to verify
-    const error = new Error("Not authenticated.");
-    error.statusCode = 401;
-    throw error;
+    req.isAuth = false;
+    return next();
   }
   // Valid token
   // Storing the userId for later use
   req.userId = decodedToken.userId;
+  req.isAuth = true;
   next();
 };
