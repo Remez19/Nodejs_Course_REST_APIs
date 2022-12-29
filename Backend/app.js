@@ -5,6 +5,10 @@ const mongoose = require("mongoose");
 const multer = require("multer");
 require("dotenv").config();
 
+const graphqlSchema = require("./graphql/schema");
+const graphqlResolver = require("./graphql/resolvers");
+const { graphqlHTTP } = require("express-graphql");
+
 const PORT = process.env.PORT;
 
 const MONGODB_URI = `mongodb+srv://${process.env.MongodbUser}:${process.env.MongodbPassword}@${process.env.MongodbDataBaseName}.7vjdhyd.mongodb.net/${process.env.MongodbCollectionName}?retryWrites=true&w=majority`;
@@ -60,6 +64,18 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
+
+// common convention to use "/graphql"
+// To graphqlHttp() we pass an object with two keys:
+// "schema" - the schema we created in the schema file.
+// "rootValue" - the resolver we created in the resolvers file
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema: graphqlSchema,
+    rootValue: graphqlResolver,
+  })
+);
 
 // Erorr middleware to catch requests that ended up
 // in a error.
