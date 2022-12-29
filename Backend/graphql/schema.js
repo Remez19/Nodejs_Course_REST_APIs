@@ -1,22 +1,38 @@
 const { buildSchema } = require("graphql");
 
-/**
- * buildSchema() generates a Schema object.
- * To buildSchema() we pass string where we describe our schema.
- * This (below) is a very simple schema where we can send "hello" query
- * to get back some "TestData".
- * the text is defined in the resolver.
- * We can define the return value to be required by adding "!".
- */
+//  "ID" - special type provided by graphql
+// createUser(userInput: UserInputData) - we expect getting some data that looks like
+// UserInputData we define in "input".
+// We expect to get back some User which hes data defined in the "User" type.
+// createUser(userInput: UserInputData): User! -> we want to get UserInputData
+// and return User
 module.exports = buildSchema(`
-    type TestData {
-        text: String!
-        views: Int!
+    type Post {
+        _id: ID!
+        title: String!
+        content: String!
+        imageUrl: String!
+        creator: User!
+        createdAt: String!
+        updatedAt: String!
     }
-    type RootQuery {
-        hello: TestData!
-    }    
+    type User {
+        _id: ID!
+        name: String!
+        email: String!
+        password: String
+        status: String!
+        posts: [Post!]
+    }
+    input UserInputData {
+        email: String!
+        password: String!
+        name: String!
+    }
+    type RootMutation {
+        createUser(userInput: UserInputData): User!
+    }
     schema {
-            query: RootQuery
-        }
+        mutation: RootMutation
+    }
 `);
