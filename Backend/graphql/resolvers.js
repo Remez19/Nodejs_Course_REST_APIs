@@ -124,6 +124,7 @@ module.exports = {
     });
     const createdPost = await newPost.save();
     user.posts.push(createdPost);
+    await user.save();
     // Add post to user's posts
     return {
       ...createdPost._doc,
