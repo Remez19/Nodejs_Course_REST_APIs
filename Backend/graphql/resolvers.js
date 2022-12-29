@@ -89,6 +89,7 @@ module.exports = {
     }
     const errors = [];
     const { title, content, imageUrl } = postInput;
+    console.log(title, content, imageUrl);
     if (
       validator.default.isEmpty(title) ||
       !validator.default.isLength(title, { min: 5 })
