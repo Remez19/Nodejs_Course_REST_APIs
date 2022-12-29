@@ -9,10 +9,6 @@ const PORT = process.env.PORT;
 
 const MONGODB_URI = `mongodb+srv://${process.env.MongodbUser}:${process.env.MongodbPassword}@${process.env.MongodbDataBaseName}.7vjdhyd.mongodb.net/${process.env.MongodbCollectionName}?retryWrites=true&w=majority`;
 
-const feedRoutes = require("./routes/feed");
-const authRoutes = require("./routes/auth");
-const { Socket } = require("socket.io");
-
 const app = express();
 
 // Control where the files will be stored
@@ -65,9 +61,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/feed", feedRoutes);
-app.use("/auth", authRoutes);
-
 // Erorr middleware to catch requests that ended up
 // in a error.
 app.use((error, req, res, next) => {
@@ -82,23 +75,13 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {
-    const server = app.listen(PORT, (err) => {
+    app.listen(PORT, (err) => {
       if (!err) {
         console.log("Connected to Database");
         console.log(`Server listening on port ${PORT}`);
       }
     });
     // socker.io return a function that we need to excute and pass the server
-    // to.
-    // Gives back a socket.io object
-    const io = require("./socket").init(server);
-    // From here we can define a eventListeners
-    // connection - wait on a new connection.
-    // this function will get fired for every new connection (client)
-    // the socket var is the connection.
-    io.on("connection", (socket) => {
-      console.log("Client connected");
-    });
   })
   .catch((err) => {
     console.log("Failed to connect to mongodb");
