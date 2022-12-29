@@ -69,11 +69,13 @@ app.use((req, res, next) => {
 // To graphqlHttp() we pass an object with two keys:
 // "schema" - the schema we created in the schema file.
 // "rootValue" - the resolver we created in the resolvers file
+// graphiql: true, - gives us a special tool a ui to play with our server GraphQl
 app.use(
   "/graphql",
   graphqlHTTP({
     schema: graphqlSchema,
     rootValue: graphqlResolver,
+    graphiql: true,
   })
 );
 
