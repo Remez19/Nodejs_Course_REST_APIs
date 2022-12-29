@@ -1,5 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const validator = require("validator");
+
 require("dotenv").config(); // to get the salt value from env
 
 module.exports = {
@@ -9,8 +11,25 @@ module.exports = {
     // We access them by args.userInput
     // Because we defined in the schema - createUser(userInput: UserInputData): User!
     // We can also destructure the args object like - createUser({ userInput }, request)
+
     const email = args.userInput.email;
     const { name, password } = args.userInput;
+    const errors = [];
+
+    if (!validator.default.isEmail(email)) {
+      errors.push({ messsage: "Not a valid email!" });
+    }
+    if (
+      validator.default.isEmpty(password) ||
+      !validator.default.isLength(password, { min: 5 })
+    ) {
+      errors.push({ messsage: "Password too short!" });
+    }
+    if (errors.length > 0) {
+      // Have erros
+      const error = new Error("Invalid input.");
+      throw error;
+    }
     const existingUser = await User.findOne({ email: email });
     if (existingUser) {
       const error = new Error("User exists already");
