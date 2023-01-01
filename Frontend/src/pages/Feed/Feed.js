@@ -56,14 +56,22 @@ class Feed extends Component {
       page--;
       this.setState({ postPage: page });
     }
-    fetch("http://localhost:8080/feed/posts?page=" + page, {
-      method: "GET",
-      headers: {
-        // We put bearer because its a convetion when working
-        // with jwt.
-        Authorization: "Bearer " + this.props.token,
-      },
-    })
+    const graphqlQuery = {
+      query: `posts {
+        posts {
+          _id
+          title
+          content
+          imageUrl
+          creator {
+            name
+          }
+          createdAt
+        }
+        totalPosts
+      }`,
+    };
+    fetch()
       .then((res) => {
         if (res.status !== 200) {
           throw new Error("Failed to fetch posts.");
