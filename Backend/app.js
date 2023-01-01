@@ -1,11 +1,12 @@
 const express = require("express");
 const path = require("path");
-const fs = require("fs");
+
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const multer = require("multer");
 require("dotenv").config();
 const auth = require("./middleware/auth");
+const { clearImage } = require("./util/file");
 
 const graphqlSchema = require("./graphql/schema");
 const graphqlResolver = require("./graphql/resolvers");
@@ -144,11 +145,3 @@ mongoose
     console.log("Failed to connect to mongodb");
     console.log(err);
   });
-
-// Helper function to delete image
-const clearImage = (filePath) => {
-  filePath = path.join(__dirname, "..", filePath);
-  fs.unlink(filePath, (err) => {
-    console.log(err);
-  });
-};
