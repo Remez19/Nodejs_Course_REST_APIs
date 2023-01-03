@@ -39,7 +39,7 @@ router.get("/status", isAuth, feedController.getStatus);
 router.put(
   "/status",
   isAuth,
-  [body("status").trim().notEmpty()],
+  [body("status").trim().not().isEmpty()],
   feedController.updateStatus
 );
 
